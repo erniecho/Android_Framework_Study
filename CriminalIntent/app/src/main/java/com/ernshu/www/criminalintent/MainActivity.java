@@ -16,10 +16,12 @@ public class MainActivity extends AppCompatActivity {
         Using Activity to describe the public class use getFragmentManger()
         */
         FragmentManager fm = getSupportFragmentManager();
+        //uses the the layout in fragment container in activity_main.xml
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
             fragment = new CrimeFragment();
+            //beginTransaction method that returns a an instance. include add and commit operation.
             fm.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
