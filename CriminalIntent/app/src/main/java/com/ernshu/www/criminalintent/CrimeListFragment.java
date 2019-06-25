@@ -76,7 +76,9 @@ public class CrimeListFragment extends Fragment {
         */
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(getActivity(), CrimeActivity.class);
+            /*CrimeHolder to use the newIntent method while passing in the crime ID
+            * pg207*/
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
             /*
             You call the Fragment.startActivity(intent) method,
             which calls the corresponding Activity method scenes.
