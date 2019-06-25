@@ -1,5 +1,6 @@
 package com.ernshu.www.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -71,13 +72,16 @@ public class CrimeListFragment extends Fragment {
             mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
         /*
-        onClick method created with a Toast Message.
+        onClick method created with a Starting an Activity from a fragment.
         */
         @Override
         public void onClick(View view) {
-            Toast.makeText(getActivity(),
-                    mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
-                    .show();
+            Intent intent = new Intent(getActivity(), CrimeActivity.class);
+            /*
+            You call the Fragment.startActivity(intent) method,
+            which calls the corresponding Activity method scenes.
+             */
+            startActivity(intent);
         }
     }
     /*
