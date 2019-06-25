@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class CrimeListFragment extends Fragment {
         //declare binding textviews.
         private TextView mTitleTextView;
         private TextView mDateTextView;
+        private ImageView mSolvedImageView;
         //binding data.
         private Crime mCrime;
         public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
@@ -59,12 +61,14 @@ public class CrimeListFragment extends Fragment {
             //Binding list to Textview.
             mTitleTextView = (TextView) itemView.findViewById(R.id.crime_title);
             mDateTextView = (TextView) itemView.findViewById(R.id.crime_date);
+            mSolvedImageView = (ImageView) itemView.findViewById(R.id.crime_solved);
         }
         public void bind(Crime crime) {
             //set text to the TextView from the data.
             mCrime = crime;
             mTitleTextView.setText(mCrime.getTitle());
             mDateTextView.setText(mCrime.getDate().toString());
+            mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
         /*
         onClick method created with a Toast Message.
