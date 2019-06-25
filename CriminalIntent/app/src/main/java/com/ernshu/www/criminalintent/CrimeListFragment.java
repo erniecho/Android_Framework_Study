@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -41,15 +43,43 @@ public class CrimeListFragment extends Fragment {
     }
     /*
     This creates a ViewHolder and an Adapter. this helps inflate the list_item-crime.
-    RecyclerView.Adapter would use this code.
+    RecyclerView.Adapter would use this code. Modify to allow OnClickListener in the view by
+    adding implements View.onClickListener.
      */
-    private class CrimeHolder extends RecyclerView.ViewHolder {
+    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        //declare binding textviews.
+        private TextView mTitleTextView;
+        private TextView mDateTextView;
+        //binding data.
+        private Crime mCrime;
         public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_crime, parent, false));
+            //added Listener
+            itemView.setOnClickListener(this);
+            //Binding list to Textview.
+            mTitleTextView = (TextView) itemView.findViewById(R.id.crime_title);
+            mDateTextView = (TextView) itemView.findViewById(R.id.crime_date);
+        }
+        public void bind(Crime crime) {
+            //set text to the TextView from the data.
+            mCrime = crime;
+            mTitleTextView.setText(mCrime.getTitle());
+            mDateTextView.setText(mCrime.getDate().toString());
+        }
+        /*
+        onClick method created with a Toast Message.
+        */
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(getActivity(),
+                    mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
+                    .show();
         }
     }
     /*
-    Creating a Adapter that uses the CrimeHolder class.
+    Creating a Adapter that uses the CrimeHolder class. Generate code by hover and auto-generate methods.
+    hover mouse over the word extend and press Option + Return on the mac keyboard.
+    select Implement methods by clicking OK and it will auto generate the code.
      */
     public class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
         private List<Crime> mCrimes;
@@ -67,7 +97,9 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(CrimeHolder holder, int position) {
-
+            //binding data to ViewHolder.
+            Crime crime = mCrimes.get(position);
+            holder.bind(crime);
         }
 
         @Override
