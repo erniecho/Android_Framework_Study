@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="16dp"
     android:orientation="vertical">
@@ -16,8 +16,12 @@
         android:id="@+id/crime_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/crime_title_hint" />
+        android:text="@string/crime_title_hint"
+        android:inputType=""
+        android:importantForAutofill="no" tools:targetApi="o" />
 
+
+    <!--the style="?android:listSeparatorTextViewStyle" points to a style sheet. -->
     <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
@@ -27,7 +31,10 @@
     <Button
         android:id="@+id/crime_date"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        />
 
     <CheckBox
         android:id="@+id/crime_solved"
