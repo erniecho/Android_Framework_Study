@@ -12,7 +12,7 @@ public class CrimeActivity extends SingleFragmentActivity {
     * you call putExtra(...) and pass in a string key and the value the key maps to (the crimeId).
     * In this case, you are calling putExtra(string, serializable) because UUID is a
     * Serializable object.*/
-    public static final String EXTRA_CRIME_ID = "com.ernshu.www.criminalintent.crime_id";
+    private static final String EXTRA_CRIME_ID = "com.ernshu.www.criminalintent.crime_id";
     public static Intent newIntent(Context packageContext, UUID crimeId) {
         Intent intent = new Intent(packageContext, CrimeActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, crimeId);
@@ -25,7 +25,12 @@ public class CrimeActivity extends SingleFragmentActivity {
      */
     @Override
     protected Fragment createFragment() {
-        return new CrimeFragment();
+        /*It will pass in the UUID it retrieved from its extra.
+        * Return to CrimeActivity and, in createFragment(), retrieve the extra
+        * from CrimeActivity's intent and pass it into CrimeFragment.newInstance(UUID)*/
+       UUID crimeId = (UUID) getIntent()
+               .getSerializableExtra(EXTRA_CRIME_ID);
+       return CrimeFragment.newInstance(crimeId);
     }
 
 }
