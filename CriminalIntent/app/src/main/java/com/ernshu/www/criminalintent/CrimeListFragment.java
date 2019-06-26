@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -33,15 +32,27 @@ public class CrimeListFragment extends Fragment {
         //pass back out a view object when this method is called.
        return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
     /*
-    method updateUI creates adapter and set it on RecycleView.
-     */
+        method updateUI creates adapter and set it on RecycleView.
+         */
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
-
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        /* Modify updateUI() method to call notifyDataSetChanged()
+         if the CrimeAdapter is already set up. */
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
     /*
     This creates a ViewHolder and an Adapter. this helps inflate the list_item-crime.
