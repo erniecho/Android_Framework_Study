@@ -62,9 +62,12 @@ public class CrimePagerActivity extends AppCompatActivity {
                 return mCrimes.size();
             }
         });
-        /*
-        *
-        *
+        /* The ViewPager shows the first item in its pagerAdapter. You can have it show the crime
+        * that was selected by setting the ViewPager's
+        * current item to the index of the selected crime.
+        * There is another PagerAdapter type that you can use called FragmentPagerAdapter.
+        * FragmentPagerAdapter is used exactly like FragmentStatePagerAdapter. It only differs in how it
+        * unloads you fragments when they are no longer needed.
         * */
         for (int i = 0; i < mCrimes.size(); i++) {
             if (mCrimes.get(i).getId().equals(crimeId)) {
