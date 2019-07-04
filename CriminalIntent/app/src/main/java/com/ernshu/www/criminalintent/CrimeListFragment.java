@@ -2,7 +2,9 @@ package com.ernshu.www.criminalintent;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +22,9 @@ public class CrimeListFragment extends Fragment {
     //declare recycleview object.
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
-
+    //declare visibility controls
+    private boolean mSubtitleVisible;
+    private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
     /*The FragmentManger is responsible for calling Fragment.onCreateOptionsMenu(Menu, MenuInflater)
     * when the activity receives its onCreateOptinsMen ()  callback from the OS. You must explicitly
@@ -44,6 +48,11 @@ public class CrimeListFragment extends Fragment {
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         //attach a manger to the recycle view.
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        /*save the mSubtitleVisible instance variable across rotation with the saved
+         instance state mechanism.*/
+        if (savedInstanceState != null) {
+            mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
+        }
         //updateUI call method that sets up CrimeListFragment's
         updateUI();
         //pass back out a view object when this method is called.
@@ -55,10 +64,16 @@ public class CrimeListFragment extends Fragment {
         super.onResume();
         updateUI();
     }
+    /* onSaveInstanceState prevent subtitle from disapearing when the screen rotates. */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
+    }
 
     /*
-        method updateUI creates adapter and set it on RecycleView.
-         */
+            method updateUI creates adapter and set it on RecycleView.
+             */
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
@@ -70,6 +85,7 @@ public class CrimeListFragment extends Fragment {
         } else {
             mAdapter.notifyDataSetChanged();
         }
+        updateSubtitle();
     }
     /*
     This creates a ViewHolder and an Adapter. this helps inflate the list_item-crime.
@@ -151,6 +167,14 @@ public class CrimeListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list, menu);
+        /*menu is created trigger an re-creation of the action items
+        * when the user presses on the SHOW SUBTITLE action item. */
+        MenuItem subtitleItem = menu.findItem(R.id.show_subtitle);
+        if (mSubtitleVisible) {
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        } else {
+            subtitleItem.setTitle(R.string.show_subtitle);
+        }
     }
 
 
@@ -169,8 +193,32 @@ public class CrimeListFragment extends Fragment {
                         .newIntent(getActivity(), crime.getId());
                 startActivity(intent);
                 return true;
+            case R.id.show_subtitle:
+                /*mSubtitleVisible member variable when showing or hiding
+                * the subtitle in the toolbar. */
+                mSubtitleVisible = !mSubtitleVisible;
+                getActivity().invalidateOptionsMenu();
+                updateSubtitle();
+                return true;
                 default:
                     return super.onOptionsItemSelected(item);
         }
+    }
+    /* updateSubtitle() first generates the subtitle string using the getString(int resId Object
+     * formatArgs) method, which accepts replacement values for the placeholders in the string
+      * resource. the activity that is hosting the CrimeListFragment is cast to an AppCompatActivity.
+      * Recall that because CriminalIntent uses the AppCompat library, all activities are subclass of
+      * AppCompatActivity, which allows you to access the toolbar.*/
+    private void updateSubtitle() {
+        CrimeLab crimeLab = CrimeLab.get(getActivity());
+        int crimeCount = crimeLab.getCrimes().size();
+        String subtitle = getString(R.string.subtitle_format, crimeCount);
+        /* the subtitle visibilty in the toolbar.*/
+        if (!mSubtitleVisible) {
+            subtitle = null;
+        }
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);
     }
 }
