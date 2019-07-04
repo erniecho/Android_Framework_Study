@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +19,20 @@ public class CrimeListFragment extends Fragment {
     //declare recycleview object.
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
+
+
+    /*The FragmentManger is responsible for calling Fragment.onCreateOptionsMenu(Menu, MenuInflater)
+    * when the activity receives its onCreateOptinsMen ()  callback from the OS. You must explicitly
+    * tell the FragmentManger that your fragment should receive a call to
+    * onCreateOptionmen(). Define CrimeListFragment.onCreate(Bundle) and let the FragmentManger know
+    * that CrimeListFragment*/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+
     @Override
     //create a view object.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,5 +144,11 @@ public class CrimeListFragment extends Fragment {
             //get a count number of mCrime array by call the method .size()
             return mCrimes.size();
         }
+    }
+    /*override onCreateOptionsMenu(Menu , MenuInflater) to inflate the menu defined in fragment_crime_list.xml*/
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_crime_list, menu);
     }
 }
