@@ -24,14 +24,15 @@ public class CrimeLab {
     }
 
     private CrimeLab(Context context) {
-        //add a Arraylist to mCrimes and creates 100 object for now.
+        //method that creates a ArrayList for mCrimes.
         mCrimes = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            Crime crime = new Crime();
-            crime.setTitle("Crime #" + i);
-            crime.setSolved(i % 2 == 0); // Every other one
-            mCrimes.add(crime);
-        }
+    }
+
+    public void addCrime(Crime c) {
+        /*To respond to the user pressing the New Crime action item,
+        you need a way to add a new Crime to your list of crimes. In CrimeLab.java,
+        add a method to do this.*/
+        mCrimes.add(c);
     }
 
     public List<Crime> getCrimes() {
