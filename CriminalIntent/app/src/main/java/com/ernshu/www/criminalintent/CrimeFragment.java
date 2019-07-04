@@ -1,5 +1,7 @@
 package com.ernshu.www.criminalintent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.Date;
 import java.util.UUID;
 
 import static android.widget.CompoundButton.*;
@@ -21,6 +24,8 @@ public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+
+    private static final int REQUEST_DATE = 0;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -75,15 +80,23 @@ public class CrimeFragment extends Fragment {
         });
         //Button connection listener.
         mDateButton = (Button)v.findViewById(R.id.crime_date);
-        mDateButton.setText(mCrime.getDate().toString());
+        updateDate();
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /*add a constant for the DatePickerFragment's tag. Then, in onCreateView(...)
                 * remove the code that disables the date button and set a View.OnClickerListener
-                * that shows a DatePicker Fragment when the date button is pressed. */
+                * that shows a DatePicker Fragment when the date button is pressed. DatePickerFragment
+                 * needs to initialize the DatePicker using the information held in the date.
+                 * However, initializing the DatePicker requires integers for the month, day, and year.
+                 * Date is more of a timestamp and cannot provide integers like this directly. */
                 FragmentManager manager = getFragmentManager();
-                DatePickerFragment dialog = new DatePickerFragment();
+                DatePickerFragment dialog = DatePickerFragment
+                        .newInstance(mCrime.getDate());
+                /*method accepts the fragment that will be the target and a request code just
+                like the one you send in startActivityForResult(...) You can retrieve them by
+                calling getTargetFragment() and getTargetRequestCode() on the fragment that has set the target. */
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
             }
         });
@@ -101,5 +114,24 @@ public class CrimeFragment extends Fragment {
 
 
         return v;
+    }
+    /*override onActivityResult() to retrieve the extra, set the date on the Crime,
+    and refresh the text of the date button*/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data
+                    .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            updateDate();
+        }
+    }
+
+    private void updateDate() {
+        mDateButton.setText(mCrime.getDate().toString());
     }
 }
