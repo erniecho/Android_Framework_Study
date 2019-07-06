@@ -4,6 +4,10 @@ package com.ernshu.www.criminalintent;
 singleton class that allows only one instance of itself to be created.
  */
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import com.ernshu.www.criminalintent.datebase.CrimeBaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +15,8 @@ import java.util.UUID;
 
 public class CrimeLab {
     private static CrimeLab sCrimeLab;
-    private List<Crime> mCrimes;
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
 
     public static CrimeLab get(Context context) {
         /* Checks to see if sCrimeLab is empty. If it doesn't have anything
@@ -24,30 +29,29 @@ public class CrimeLab {
     }
 
     private CrimeLab(Context context) {
-        //method that creates a ArrayList for mCrimes.
-        mCrimes = new ArrayList<>();
+        /*
+        * attach a datebase to mDatabase object. */
+        mContext = context.getApplicationContext();
+        mDatabase = new CrimeBaseHelper(mContext)
+                .getWritableDatabase();
     }
 
     public void addCrime(Crime c) {
         /*To respond to the user pressing the New Crime action item,
         you need a way to add a new Crime to your list of crimes. In CrimeLab.java,
         add a method to do this.*/
-        mCrimes.add(c);
+        //mCrimes.add(c);
     }
 
     public List<Crime> getCrimes() {
-        return mCrimes;
+        return new ArrayList<>();
     }
 
     public Crime getCrime(UUID id) {
         /*
         method to return a UUID of a object.
          */
-        for (Crime crime : mCrimes) {
-            if (crime.getId().equals(id)) {
-                return crime;
-            }
-        }
+
         return null;
     }
 }
