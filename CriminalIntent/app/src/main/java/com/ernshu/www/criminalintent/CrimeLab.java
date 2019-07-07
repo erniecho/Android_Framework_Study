@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.ernshu.www.criminalintent.datebase.CrimeBaseHelper;
+import com.ernshu.www.criminalintent.datebase.CrimeCursorWrapper;
 import com.ernshu.www.criminalintent.datebase.CrimeDbSchema.CrimeTable;
 
 import java.util.ArrayList;
@@ -50,16 +51,50 @@ public class CrimeLab {
         mDatabase.insert(CrimeTable.NAME, null, values);
     }
 
+    /* Datebase cursor are callled cursors because they always have their finger on a particular place in a
+    * query. So to pull the data out of a cursor, you move it to the frist element by calling moveToFirst(),
+    * and then read in row data. Eachtime you want to advance to a new row, you call moveToNext(), until
+    * finally isAfterLast() tells you that your pointer is off the end of the data set. */
     public List<Crime> getCrimes() {
-        return new ArrayList<>();
-    }
+        List<Crime> crimes = new ArrayList<>();
 
+        CrimeCursorWrapper cursor = queryCrimes(null, null);
+
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                crimes.add(cursor.getCrime());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return crimes;
+    }
+    /* CrimeLab.getCrime(UUID) will look similiar to getCrime(), except ti will only need to pull
+    * first item, if it is there. */
     public Crime getCrime(UUID id) {
         /*
         method to return a UUID of a object.
          */
-        return null;
+        CrimeCursorWrapper cursor = queryCrimes(
+                CrimeTable.Cols.UUID + " = ?",
+                new String[] { id.toString() }
+        );
+        try {
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+
+            cursor.moveToFirst();
+            return cursor.getCrime();
+        } finally {
+            cursor.close();
+        }
     }
+
+
     /* The update(String, ContentValues, String, String[]) method starts off similarly to insert()
     * you pass in the table name you want to update and the ContentValues you want to assign to each
     * row you update. However, the last bit is different, beacause now you have to specify which rows get
@@ -75,9 +110,11 @@ public class CrimeLab {
     }
 
     /* Use query() in a convenience method to call this on your CrimeTable.
-    * */
+    * With CrimeCursorWrapper, vending out a List<Crime> from CrimeLab will be straightforward.
+    * You need to wrap the cursor you get back from your query in a CrimeCursorWrapper, then iterate over it
+    * calling getCrime() to pull out its crime data.*/
 
-    private Cursor queryCrimes(String whereClause, String[] whereArgs) {
+    private CrimeCursorWrapper queryCrimes(String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(
                 CrimeTable.NAME,
                 null, // columns - null selects all columns
@@ -88,7 +125,7 @@ public class CrimeLab {
                 null //orderBy
         );
 
-        return cursor;
+        return new CrimeCursorWrapper(cursor);
     }
 
 

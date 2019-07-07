@@ -83,6 +83,7 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
+            mAdapter.setCrimes(crimes);
             mAdapter.notifyDataSetChanged();
         }
         updateSubtitle();
@@ -160,6 +161,10 @@ public class CrimeListFragment extends Fragment {
         public int getItemCount() {
             //get a count number of mCrime array by call the method .size()
             return mCrimes.size();
+        }
+
+        public void setCrimes(List<Crime> crimes) {
+            mCrimes = crimes;
         }
     }
     /*override onCreateOptionsMenu(Menu , MenuInflater) to inflate the menu defined in fragment_crime_list.xml*/
