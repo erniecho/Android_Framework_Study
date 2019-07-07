@@ -44,7 +44,13 @@ public class Crime {
 
 
     public Crime() {
-        mId = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    /* You will need to return a Crime with an appropriate UUID from this method.
+    * Add another constructor to Crime to do this. */
+    public Crime(UUID id) {
+        mId = id;
         mDate = new Date();
     }
 }
