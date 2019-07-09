@@ -16,9 +16,11 @@
         android:id="@+id/crime_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/crime_title_hint"
+        android:hint="@string/crime_title_hint"
+        android:importantForAutofill="no"
         android:inputType=""
-        android:importantForAutofill="no" tools:targetApi="o" />
+        android:text="@string/crime_title_hint"
+        tools:targetApi="o" />
 
 
     <!--the style="?android:listSeparatorTextViewStyle" points to a style sheet. -->
@@ -41,4 +43,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/crime_solved_label" />
+
+    <Button
+        android:id="@+id/crime_suspect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_suspect_text" />
+
+    <Button
+        android:id="@+id/crime_report"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_report_text" />
 </LinearLayout>
