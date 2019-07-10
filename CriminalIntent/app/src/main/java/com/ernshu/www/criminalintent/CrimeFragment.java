@@ -32,6 +32,7 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private Button mReportButton;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         /*When the hosting activity needs instance of that fragment, you have it call
@@ -122,6 +123,20 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        /* In CrimeFragment.onCreateView(), get a reference to the SEND CRIME REPORT button and
+        * set a listener on it. Within the listener's implementation, create an implicit intent
+        * and pass it into startActivity(Intent). */
+        mReportButton = (Button) v.findViewById(R.id.crime_report);
+        mReportButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+                i.putExtra(Intent.EXTRA_SUBJECT,
+                        getString(R.string.crime_report_subject));
+                startActivity(i);
+            }
+        });
 
         return v;
     }
