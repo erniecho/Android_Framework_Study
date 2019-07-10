@@ -19,6 +19,7 @@ import android.widget.EditText;
 import java.util.Date;
 import java.util.UUID;
 
+import static android.text.format.DateFormat.format;
 import static android.widget.CompoundButton.*;
 
 public class CrimeFragment extends Fragment {
@@ -175,6 +176,7 @@ public class CrimeFragment extends Fragment {
         if (suspect == null) {
             suspect = getString(R.string.crime_report_no_suspect);
         } else {
+<<<<<<< Updated upstream
             suspect = getString(R.string.crime_report_suspect, suspect);
         }
 
@@ -183,5 +185,12 @@ public class CrimeFragment extends Fragment {
 
         return report;
 
+=======
+         suspect = getString(R.string.crime_report_suspect, suspect);
+        }
+        String report = getString(R.string.crime_report,
+                mCrime.getTitle(), dateString, solvedString, suspect);
+        return report;
+>>>>>>> Stashed changes
     }
 }

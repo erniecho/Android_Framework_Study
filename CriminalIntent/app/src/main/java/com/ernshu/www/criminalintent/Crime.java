@@ -9,7 +9,11 @@ public class Crime {
     private String mTitle;
     private Date mDate;
     private boolean mSolved;
+<<<<<<< Updated upstream
     private String mSuspect;
+=======
+    private  String mSuspect;
+>>>>>>> Stashed changes
 
     public UUID getId() {
         return mId;
@@ -47,8 +51,13 @@ public class Crime {
         return mSuspect;
     }
 
+<<<<<<< Updated upstream
     public void setSuspect(String mSuspect) {
         this.mSuspect = mSuspect;
+=======
+    public  void setSuspect(String suspect) {
+        mSuspect = suspect;
+>>>>>>> Stashed changes
     }
 
     public Crime() {
