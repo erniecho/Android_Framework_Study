@@ -176,7 +176,6 @@ public class CrimeFragment extends Fragment {
         if (suspect == null) {
             suspect = getString(R.string.crime_report_no_suspect);
         } else {
-<<<<<<< Updated upstream
             suspect = getString(R.string.crime_report_suspect, suspect);
         }
 
@@ -184,13 +183,5 @@ public class CrimeFragment extends Fragment {
                 mCrime.getTitle(), dateString, solvedString, suspect);
 
         return report;
-
-=======
-         suspect = getString(R.string.crime_report_suspect, suspect);
-        }
-        String report = getString(R.string.crime_report,
-                mCrime.getTitle(), dateString, solvedString, suspect);
-        return report;
->>>>>>> Stashed changes
     }
 }
