@@ -3,6 +3,7 @@ package com.ernshu.www.criminalintent;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -28,12 +29,14 @@ public class CrimeFragment extends Fragment {
     private static final String DIALOG_DATE = "DialogDate";
 
     private static final int REQUEST_DATE = 0;
+    private  static final int REQUEST_CONTACT = 1;
 
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
+    private Button mSuspectButton;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         /*When the hosting activity needs instance of that fragment, you have it call
@@ -135,10 +138,29 @@ public class CrimeFragment extends Fragment {
                 i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
                 i.putExtra(Intent.EXTRA_SUBJECT,
                         getString(R.string.crime_report_subject));
+                /* createChooser does shareing to other devices. */
+                i = Intent.createChooser(i, getString(R.string.send_report));
                 startActivity(i);
             }
         });
+        /* Now you are going to create another implicit intent that enables users to choose a suspect
+        * from their contacts. This implicit intent will have an action and a location where the relevant
+        * data can be found. The action will be Intent.ACTION_PICK. The data for contacts is at
+        * ContactsContract.Contacts.CONTENT_URI. In short, you are asking Android to help pick an item
+        * in the contacts database. */
+        final Intent pickContact = new Intent(Intent.ACTION_PICK,
+                ContactsContract.Contacts.CONTENT_URI);
+        mSuspectButton = (Button) v.findViewById(R.id.crime_suspect);
+        mSuspectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(pickContact, REQUEST_CONTACT);
+            }
+        });
 
+        if (mCrime.getSuspect() != null) {
+         mSuspectButton.setText(mCrime .getSuspect());
+        }
         return v;
     }
     /*override onActivityResult() to retrieve the extra, set the date on the Crime,

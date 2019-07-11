@@ -19,12 +19,8 @@
         android:hint="@string/crime_title_hint"
         android:importantForAutofill="no"
         android:inputType=""
-<<<<<<< Updated upstream
         android:text="@string/crime_title_hint"
-=======
->>>>>>> Stashed changes
         tools:targetApi="o" />
-
 
     <!--the style="?android:listSeparatorTextViewStyle" points to a style sheet. -->
     <TextView
