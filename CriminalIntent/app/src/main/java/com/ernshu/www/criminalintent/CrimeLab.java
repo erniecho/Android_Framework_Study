@@ -94,7 +94,12 @@ public class CrimeLab {
             cursor.close();
         }
     }
-
+    /* Crime.getPhotoFilename() will not know what folder the photo will be stored in. However, the
+    * filename will be unique, since it is based on the Crime's ID
+    *
+    * Next, find where the photos should live. CrimeLab is responsible for everything related to presisting
+    * data in CriminalIntent, so it is a nartural owner for this idea. Add a getPhotoFile(Crime) method to
+    * CrimeLab that provides a complete local filepath for Crime's image. */
     public File getPhotoFile(Crime crime) {
         File filesDir = mContext.getFilesDir();
         return new File(filesDir, crime.getPhotoFilename());

@@ -3,12 +3,15 @@ package com.ernshu.www.criminalintent;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -24,9 +27,9 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
-import static android.text.format.DateFormat.format;
 import static android.widget.CompoundButton.*;
 
 public class CrimeFragment extends Fragment {
@@ -36,6 +39,7 @@ public class CrimeFragment extends Fragment {
 
     private static final int REQUEST_DATE = 0;
     private  static final int REQUEST_CONTACT = 1;
+    private  static final int REQUEST_PHOTO = 2;
 
     private Crime mCrime;
     private File mPhotoFile;
@@ -182,6 +186,37 @@ public class CrimeFragment extends Fragment {
             mSuspectButton.setEnabled(false);
         }
         mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        boolean canTakePhoto = mPhotoFile != null &&
+                captureImage.resolveActivity(packageManager) != null;
+        mPhotoButton.setEnabled(canTakePhoto);
+        /* Calling FileProvider.getUriForFile() translates your local filepath into a Uri the camera app
+        * can see. To actually write to it, though, you need to grant the camera app permission. To do this,
+        * you grant the Intent.FLAG_GRANT_WRITE_URI_PERMISSION flag to every activity your cameraImage
+        * intent can resolve to. That grants them all a write permission specifically for this one Uri.
+        * Adding the android:grantUriPermissions attribute in your provider declaration was necessary
+        * to open this bit of functionality. Later, you will revoke this permission
+        * to close up that gap in your armor again. */
+        mPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = FileProvider.getUriForFile(getActivity(),
+                        "com.ernshu.www.criminalintent.fileprovider",
+                        mPhotoFile);
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
+                List<ResolveInfo> cameraActivities = getActivity()
+                        .getPackageManager().queryIntentActivities(captureImage,
+                                PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo activity : cameraActivities) {
+                    getActivity().grantUriPermission(activity.activityInfo.packageName,
+                            uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
 
         return v;
