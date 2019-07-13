@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -186,18 +187,19 @@ public class CrimeFragment extends Fragment {
             mSuspectButton.setEnabled(false);
         }
         mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
+        /* Calling FileProvider.getUriForFile() translates your local filepath into a Uri the camera app
+         * can see. To actually write to it, though, you need to grant the camera app permission. To do this,
+         * you grant the Intent.FLAG_GRANT_WRITE_URI_PERMISSION flag to every activity your cameraImage
+         * intent can resolve to. That grants them all a write permission specifically for this one Uri.
+         * Adding the android:grantUriPermissions attribute in your provider declaration was necessary
+         * to open this bit of functionality. Later, you will revoke this permission
+         * to close up that gap in your armor again. */
         final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         boolean canTakePhoto = mPhotoFile != null &&
                 captureImage.resolveActivity(packageManager) != null;
         mPhotoButton.setEnabled(canTakePhoto);
-        /* Calling FileProvider.getUriForFile() translates your local filepath into a Uri the camera app
-        * can see. To actually write to it, though, you need to grant the camera app permission. To do this,
-        * you grant the Intent.FLAG_GRANT_WRITE_URI_PERMISSION flag to every activity your cameraImage
-        * intent can resolve to. That grants them all a write permission specifically for this one Uri.
-        * Adding the android:grantUriPermissions attribute in your provider declaration was necessary
-        * to open this bit of functionality. Later, you will revoke this permission
-        * to close up that gap in your armor again. */
+
         mPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,6 +220,7 @@ public class CrimeFragment extends Fragment {
         });
 
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+        updatePhotoView();
 
         return v;
     }
@@ -264,6 +267,14 @@ public class CrimeFragment extends Fragment {
             } finally {
                 c.close();
             }
+        } else if (requestCode == REQUEST_PHOTO) {
+            Uri uri = FileProvider.getUriForFile(getActivity(),
+                    "com.ernshu.www.criminalintent.fileprovider",
+                    mPhotoFile);
+
+            getActivity().revokeUriPermission(uri,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            updatePhotoView();
         }
     }
 
@@ -293,5 +304,15 @@ public class CrimeFragment extends Fragment {
                 mCrime.getTitle(), dateString, solvedString, suspect);
 
         return report;
+    }
+
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(
+                    mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
     }
 }
