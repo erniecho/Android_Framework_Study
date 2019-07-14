@@ -1,9 +1,11 @@
 package com.ernshu.www.criminalintent;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +26,23 @@ public class CrimeListFragment extends Fragment {
     private CrimeAdapter mAdapter;
     //declare visibility controls
     private boolean mSubtitleVisible;
+    private Callbacks mCallbacks;
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
+
+
+    /* Requrired interfaces for hosting activities
+    *  implement a Callbacks interface, you first define call back below.*/
+
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+ /* Activity is a subclass of Context, so onAttach passes a Context as perameter, which is more flexible.
+ * OnAttach(context) signature for onAttach.*/
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
 
     /*The FragmentManger is responsible for calling Fragment.onCreateOptionsMenu(Menu, MenuInflater)
     * when the activity receives its onCreateOptinsMen ()  callback from the OS. You must explicitly
@@ -70,10 +88,16 @@ public class CrimeListFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
     }
+    /* mCallbacks variable and override onAttach(Context) and onDetach() to set and unset it.*/
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     /*
-            method updateUI creates adapter and set it on RecycleView.
-             */
+                method updateUI creates adapter and set it on RecycleView.
+                 */
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
@@ -124,6 +148,11 @@ public class CrimeListFragment extends Fragment {
             /*CrimeHolder to use the newIntent method while passing in the crime ID
             * pg207*/
             Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
+            /* Fragment fragment = CrimeFragment.newInstance(mCrime.getId());
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction()
+                    .add(R.id.detail_fragment_container, fragment)
+                    .commit(); */
             /*
             You call the Fragment.startActivity(intent) method,
             which calls the corresponding Activity method scenes.
