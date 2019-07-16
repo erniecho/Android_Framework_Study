@@ -145,19 +145,11 @@ public class CrimeListFragment extends Fragment {
         */
         @Override
         public void onClick(View view) {
-            /*CrimeHolder to use the newIntent method while passing in the crime ID
-            * pg207*/
-            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
-            /* Fragment fragment = CrimeFragment.newInstance(mCrime.getId());
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction()
-                    .add(R.id.detail_fragment_container, fragment)
-                    .commit(); */
             /*
             You call the Fragment.startActivity(intent) method,
             which calls the corresponding Activity method scenes.
              */
-            startActivity(intent);
+            mCallbacks.onCrimeSelected(mCrime);
         }
     }
     /*
@@ -223,9 +215,8 @@ public class CrimeListFragment extends Fragment {
             case R.id.new_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity
-                        .newIntent(getActivity(), crime.getId());
-                startActivity(intent);
+                updateUI();
+                mCallbacks.onCrimeSelected(crime);
                 return true;
             case R.id.show_subtitle:
                 /*mSubtitleVisible member variable when showing or hiding
