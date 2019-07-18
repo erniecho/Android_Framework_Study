@@ -98,7 +98,7 @@ public class CrimeListFragment extends Fragment {
     /*
                 method updateUI creates adapter and set it on RecycleView.
                  */
-    private void updateUI() {
+    public void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
         /* Modify updateUI() method to call notifyDataSetChanged()
